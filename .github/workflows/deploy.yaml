@@ -1,8 +1,8 @@
 name: Merge pull request
 
 on:
-    push:
-      branches:
+  push:
+    branches:
       - main
     paths:
       - 'force-app/**'
