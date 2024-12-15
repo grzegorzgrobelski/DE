@@ -22,6 +22,13 @@ jobs:
         run: | 
           echo ${{ secrets.SFDX_AUTH_URL }} | sf org login sfdx-url -s -u
 
-      - name: 'Validate'
+      - name: 'Validate (Check-Only)'
         run: |
-          sf project deploy validate -d force-app/ -l RunLocalTests -w 30          
+          sf project deploy start -d force-app/ --check-only -w 30 > result.txt
+          export DEPLOY_ID=$(grep -oP '(?<=0Af)[a-zA-Z0-9]{15}' result.txt)
+          echo "DEPLOY_ID=$DEPLOY_ID" >> $GITHUB_ENV
+
+      - name: 'Quick Deploy'
+        run: |
+          sf project deploy quick --job-id ${{ env.DEPLOY_ID }} -w 10
+
